@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Input Module</title>
+  <style>
+    body {
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    #container {
+      width: 300px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 5px;
+      border:1px solid #ccc;
+      border-radius:3px;
+    }
+
+    button {
+      width:100%;
+      padding:10px;
+      background-color:#337ab7;
+      color:#fff;
+      border:0;
+      border-radius:3px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color:#286090;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <h1>Input Module</h1>
+
+    <form id="input-form">
+      <label for="name">Name:</label>
+      <input type="text" id="name">
+
+      <label for="email">Email:</label>
+      <input type="email" id="email">
+
+      <label for="what-they-provide">What They Provide:</label>
+      <select id="what-they-provide">
+        <option value="professional-development-workshops">Professional Development Workshops</option>
+        <option value="industry-networking-events">Industry Networking Events</option>
+        <option value="shared-resource-centers">Shared Resource Centers</option>
+        <option value="internship-and-apprenticeship-programs">Internship and Apprenticeship Programs</option>
+        <option value="innovation-labs-or-incubators">Innovation Labs or Incubators</option>
+      </select>
+
+      <label for="organization-type">Type of Organization:</label>
+      <select id="organization-type">
+        <option value="consultative-partnerships">Consultative Partnerships</option>
+        <option value="contributory-partnerships">Contributory Partnerships</option>
+        <option value="operational-partnerships">Operational Partnerships</option>
+        <option value="collaborative-partnerships">Collaborative Partnerships</option>
+      </select>
+
+      <br>
+      <button type="submit" id="submit-button">Submit</button>
+      <br>
+      <button type="button" id="back-button">Back</button>
+
+  <script>
+    const inputForm = document.getElementById('input-form');
+    const backButton = document.getElementById('back-button');
+
+    inputForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const organizationType = document.getElementById('organization-type').value;
+      const whatTheyProvide = document.getElementById('what-they-provide').value;
+
+      const data = {
+        name: name,
+        email: email,
+        organizationType: organizationType,
+        whatTheyProvide: whatTheyProvide
+      };
+
+      const csvData = `${data.name},${data.email},${data.organizationType},${data.whatTheyProvide}\n`;
+
+      fetch('data.csv', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/csv'
+        },
+        body: csvData
+      })
+        .then(response => {
+          if (response.ok) {
+            alert('Data submitted successfully.');
+          } else {
+            alert('An error occurred while submitting the data.');
+          }
+        })
+        .catch(error => {
+          alert('An error occurred while submitting the data.');
+        });
+    });
+
+    backButton.addEventListener('click', () => {
+      window.location.href = 'page2.html';
+    });
+  </script>
+</body>
+
+</html>

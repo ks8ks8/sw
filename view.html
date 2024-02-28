@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Partner Data Sheet</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #005A9C;
+      text-align: left;
+      padding: 8px;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .sort-button {
+      cursor: pointer;
+      color: #005A9C;
+      border: #005A9C;
+      background: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Patner Data Sheet</h2>
+  <input type="text" id="search-input" placeholder="Search/Find...">
+  <table id="data-table">
+    <tr>
+      <th onclick="sortColumn(0)">Name <button class="sort-button">&#9650;</button></th>
+      <th onclick="sortColumn(1)">Email <button class="sort-button">&#9650;</button></th>
+      <th onclick="sortColumn(2)">Organization Type <button class="sort-button">&#9650;</button></th>
+      <th onclick="sortColumn(3)">What They Provide <button class="sort-button">&#9650;</button></th>
+      <button onclick="window.location.href='page2.html'" style="color: dodgerblue; font-family: Verdana, Geneva, Tahoma, sans-serif;">Back</button>
+    </tr>
+  </table>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script>
+    function sortColumn(columnIndex) {
+      const table = document.getElementById('data-table');
+      const rows = Array.from(table.getElementsByTagName('tr'));
+      const headerRow = rows.shift();
+
+      const isAscending = headerRow.getElementsByTagName('th')[columnIndex].classList.contains('ascending');
+      
+      rows.sort((a, b) => {
+        const cellA = a.getElementsByTagName('td')[columnIndex].textContent;
+        const cellB = b.getElementsByTagName('td')[columnIndex].textContent;
+        if (isAscending) {
+          return cellA.localeCompare(cellB);
+        } else {
+          return cellB.localeCompare(cellA);
+        }
+      });
+      
+      if (isAscending) {
+        headerRow.getElementsByTagName('th')[columnIndex].classList.remove('ascending');
+      } else {
+        headerRow.getElementsByTagName('th')[columnIndex].classList.add('ascending');
+      }
+      
+      rows.forEach(row => table.appendChild(row));
+    }
+    
+    fetch('data.csv')
+      .then(response => response.text())
+      .then(data => {
+        const table = document.getElementById('data-table');
+        Papa.parse(data, {
+          header: true,
+          dynamicTyping: true,
+          complete: function(results) {
+            results.data.forEach(row => {
+              const newRow = table.insertRow();
+              const cell1 = newRow.insertCell(0);
+              const cell2 = newRow.insertCell(1);
+              const cell3 = newRow.insertCell(2);
+              const cell4 = newRow.insertCell(3);
+              cell1.innerHTML = row.Name;
+              cell2.innerHTML = row.Email;
+              cell3.innerHTML = row['Organization Type'];
+              cell4.innerHTML = row['What They Provide'];
+            });
+          }
+        });
+      });
+
+    const searchInput = document.getElementById('search-input');
+    const table = document.getElementById('data-table');
+
+    searchInput.addEventListener('input', (event) => {
+      const searchTerm = event.target.value.toLowerCase();
+      const rows = Array.from(table.getElementsByTagName('tr'));
+      rows.forEach((row) => {
+        const cells = Array.from(row.getElementsByTagName('td'));
+        const isMatch = cells.some((cell) => {
+          return cell.textContent.toLowerCase().includes(searchTerm);
+        });
+
+        if (isMatch) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

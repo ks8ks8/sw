@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>SW CTE DATABASE</title>
+  <style>
+    body {
+      background-color: #f0f0f0;
+      font-family: Verdana, Arial, sans-serif;
+      color: #1e90ff;
+    }
+
+    #container {
+      width: 300px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #337ab7;
+      color: #fff;
+      border: 0;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #286090;
+    }
+
+    .error {
+      color: #d9534f;
+      font-weight: bold;
+    }
+
+    .success {
+      color: #4caf50;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <h1>Welcome to the South Windsor Career and Technical Database</h1>
+    <img src="https://cdnsm5-ss13.sharpschool.com/UserFiles/Servers/Server_239916/Image/logo1/SWP.png" alt="SWP Logo"
+      style="width: 200px; height: 200px;">
+    <div id="buttons">
+      <button id="register-button">Register</button>
+      <button id="sign-in-button">Sign In</button>
+    </div>
+
+    <div id="register-form" class="hidden">
+      <form id="register-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password">
+
+        <label for="verification-pin">Verification Pin:</label>
+        <input type="text" id="verification-pin">
+
+        <button type="submit" id="register-submit-button">Register</button>
+      </form>
+    </div>
+
+    <div id="sign-in-form" class="hidden">
+      <form id="sign-in-form">
+        <label for="username">Username:</label>
+        <input type="text" id="username">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password">
+
+        <button type="submit" id="sign-in-submit-button">Sign In</button>
+      </form>
+    </div>
+
+    <div id="status"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script>
+    const registerButton = document.getElementById('register-button');
+    const signInButton = document.getElementById('sign-in-button');
+
+    const registerForm = document.getElementById('register-form');
+    const signInForm = document.getElementById('sign-in-form');
+
+    const status = document.getElementById('status');
+
+    const verificationPin = '73680666';
+
+    registerButton.addEventListener('click', () => {
+      registerForm.classList.remove('hidden');
+      signInForm.classList.add('hidden');
+    });
+
+    signInButton.addEventListener('click', () => {
+      registerForm.classList.add('hidden');
+      signInForm.classList.remove('hidden');
+    });
+
+    registerForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const verificationPinInput = document.getElementById('verification-pin').value;
+
+      if (verificationPinInput !== verificationPin) {
+        status.innerHTML = '<p class="error">Verification Pin is incorrect.</p>';
+        return;
+      }
+
+      const user = {
+        username,
+        password
+      };
+
+      // Save the user to the CSV file
+      Papa.parse(Papa.unparse([user]), {
+        delimiter: ',',
+        newline: '\n',
+        header: false,
+        complete: function (results) {
+          const csvData = results.data[0];
+
+          fetch('user.csv', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'text/csv'
+            },
+            body: csvData
+          })
+            .then(response => {
+              if (response.ok) {
+                status.innerHTML = '<p class="success">Registration successful.</p>';
+                window.location.href = 'page2.html';
+              } else {
+                status.innerHTML = '<p class="error">An error occurred while saving the user.</p>';
+              }
+            })
+            .catch(error => {
+              status.innerHTML = '<p class="error">An error occurred while saving the user.</p>';
+            });
+        }
+      });
+    });
+
+    signInForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      // Check if the user exists in the CSV file
+      fetch('user.csv')
+        .then(response => response.text())
+        .then(data => {
+          const lines = data.split('\n');
+          const users = lines.map(line => {
+            const [username, password] = line.split(',');
+            return {
+              username,
+              password
+            };
+          });
+
+          const user = users.find(user => user.username === username && user.password === password);
+
+          if (user) {
+            status.innerHTML = '<p class="success">Sign in successful.</p>';
+            window.location.href = 'page2.html';
+          } else {
+            status.innerHTML = '<p class="error">Username or password is incorrect.</p>';
+          }
+        })
+        .catch(error => {
+          status.innerHTML = '<p class="error">An error occurred while fetching the user data.</p>';
+        });
+    });
+  </script>
+</body>
+
+</html>

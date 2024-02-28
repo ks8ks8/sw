@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Our Career and Technical Partners</title>
+  <style>
+    body {
+      background-color: #f0f0f0;
+      font-family: Courier, Arial, sans-serif;
+      color: #1e90ff;
+    }
+
+    #container {
+      width: 300px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width:100%;
+      padding:10px;
+      background-color: #337ab7;
+      color:#fff;
+      border:0;
+      border-radius:3px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #286090;
+    }
+
+    img {
+      position: absolute;
+      bottom: 18;
+      left: 50%;
+      transform: translate(-50%, 0);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="container">
+    <h1>Work With Our Technical Partners</h1>
+
+    <div id="buttons">
+      <button id="input-button">Input</button>
+      <button id="view-button">View</button>
+      <button id="help-button">Help/AI</button>
+      <button id="about-us-button">Extra Resources</button>
+    </div>
+  </div>
+
+  <img src="https://portal.ct.gov/-/media/SDE/CTE/TodaysSkillsTomorrowsCareers_logo.png?sc_lang=en&h=142&w=230&hash=58CD6CBF19CBF4BE49A33E9FA94D58A8" alt="Today's Skills Tomorrow's Careers">
+
+  <script>
+    const inputButton = document.getElementById('input-button');
+    const viewButton = document.getElementById('view-button');
+    const helpButton = document.getElementById('help-button');
+    const aboutUsButton = document.getElementById('about-us-button');
+
+    inputButton.addEventListener('click', () => {
+      window.location.href = 'input.html';
+    });
+
+    viewButton.addEventListener('click', () => {
+      window.location.href = 'view.html';
+    });
+
+    helpButton.addEventListener('click', () => {
+      window.location.href = 'help.py';
+    });
+
+    aboutUsButton.addEventListener('click', () => {
+      window.location.href = 'learn.html';
+    });
+  </script>
+</body>
+</html>
